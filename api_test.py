@@ -2,7 +2,7 @@ import requests
 import os
 
 # api_key = os.environ["RIOT_APP_API_KEY"]
-api_key = "insert api via developer.riotgames.com"
+api_key = "RGAPI-5b1ac605-ea0b-4e1d-b90a-c4233e0c0b95"
 accountv1url = "https://americas.api.riotgames.com/riot/account/v1/accounts/by-riot-id/"
 accountv4url = "https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/"
 riotid = input("What is your Riot ID\n")
@@ -27,4 +27,6 @@ if not tftresponse.json():
 else : 
     print(response.json()['name'] + "'s rank in TFT is",
       tftresponse.json()[0]['tier'], 
-      tftresponse.json()[0]['rank'])
+      tftresponse.json()[0]['rank'],
+      tftresponse.json()[0]['leaguePoints'],
+      "LP")
