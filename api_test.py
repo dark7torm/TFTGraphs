@@ -27,4 +27,6 @@ if not tftresponse.json():
 else : 
     print(response.json()['name'] + "'s rank in TFT is",
       tftresponse.json()[0]['tier'], 
-      tftresponse.json()[0]['rank'])
+      tftresponse.json()[0]['rank'],
+      tftresponse.json()[0]['leaguePoints'],
+      "LP")
