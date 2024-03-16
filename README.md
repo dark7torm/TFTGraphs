@@ -9,7 +9,7 @@ Get an API key from riot games development site at https://developer.riotgames.c
 Install pip, python via command line
 
 
-### Links
+## Links
 https://www.youtube.com/watch?v=jkzq9j5yeT8&list=PL3vL1pnMCbUERqllcwhcvEJbKum-M9zT5&ab_channel=iTeroGaming
 
 Nice video series expaining python basics, Riot API etc. mainly focused on league but the general ideas are there
