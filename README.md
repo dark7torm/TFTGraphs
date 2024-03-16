@@ -24,5 +24,5 @@ Install pip, python via command line
 
 
 
-[Beora Riot API guide](https://github.com/Baeora/riot_api_tools), also generally useful + has a lot of small
+[Beora Riot API guide](https://github.com/Baeora/riot_api_tools), also generally useful + has a lot of good specific info
 
