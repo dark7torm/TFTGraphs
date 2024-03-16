@@ -37,8 +37,9 @@ else :
 
 # renpuuid = '1dq1hI89Zgd__zcs8qkr3YaKdK35R4wj20YNB8ELdJL5_55XGPAch6g0KEiAAwFpfkeMjEnQ5HrWOg'
 tftgamelisturl = 'https://americas.api.riotgames.com/tft/match/v1/matches/by-puuid/'
-count = input("How many game info")
+count = input("How many game info\n")
 tftgamelisturl += puuid + '/ids?start=0&' 'count=' +count + '&api_key=' + api_key
 gameresponse = requests.get(tftgamelisturl)
+gameList = gameresponse.json()
 print(gameresponse.json())
 games = ''
