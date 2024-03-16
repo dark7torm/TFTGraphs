@@ -8,6 +8,10 @@ Get an API key from riot games development site at https://developer.riotgames.c
 
 Install pip, python via command line
 
+Install PostgreSQL 
+
+https://www.youtube.com/watch?v=KuQUNHCeKCk&ab_channel=BekBrace
+
 
 ## Links
 https://www.youtube.com/watch?v=jkzq9j5yeT8&list=PL3vL1pnMCbUERqllcwhcvEJbKum-M9zT5&ab_channel=iTeroGaming
