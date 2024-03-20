@@ -15,6 +15,7 @@ tagline = parts[1]
 accountv1url += username + "/" + tagline + "?api_key=" + api_key
 
 puuidresponse = requests.get(accountv1url)
+print(accountv1url)
 puuid = puuidresponse.json()['puuid']
 tftaccounturl += puuid + "?api_key=" + api_key
 response = requests.get(tftaccounturl)
