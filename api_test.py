@@ -47,8 +47,6 @@ def username_finder(puuid):
 
     tftaccounturl2 = "https://na1.api.riotgames.com/tft/summoner/v1/summoners/by-puuid/"
     tftaccounturl2 += puuid+"?api_key="+ api_key
-    print(puuid)
-    print(tftaccounturl2)
     response = requests.get(tftaccounturl2)
     id = response.json()['name']
 
