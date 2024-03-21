@@ -8,9 +8,9 @@ test_id = "1dq1hI89Zgd__zcs8qkr3YaKdK35R4wj20YNB8ELdJL5_55XGPAch6g0KEiAAwFpfkeMj
 #ren + jisung id
 test_ids = ["1dq1hI89Zgd__zcs8qkr3YaKdK35R4wj20YNB8ELdJL5_55XGPAch6g0KEiAAwFpfkeMjEnQ5HrWOg",
             "_Mgiig0pdFVXxA2btc4XjF_hVSOW16JzLhZiBZRi6LJdxt-QAZJD5fIY7sGcmKfIzJp37HjQggTR7A"]
+
 accountv1url = "https://americas.api.riotgames.com/riot/account/v1/accounts/by-riot-id/"
 tftaccounturl = "https://na1.api.riotgames.com/tft/summoner/v1/summoners/by-puuid/"
-
 
 riotid = input("What is your Riot ID\n")
 parts = riotid.split('#')
@@ -19,6 +19,7 @@ tagline = parts[1]
 accountv1url += username + "/" + tagline + "?api_key=" + api_key
 puuidresponse = requests.get(accountv1url)
 puuid = puuidresponse.json()['puuid']
+
 tftaccounturl += puuid + "?api_key=" + api_key
 response = requests.get(tftaccounturl)
 id = response.json()['id']
@@ -46,8 +47,56 @@ gameresponse = requests.get(tftgamelisturl)
 print(gameresponse.json())
 games = ''
 
-def username_finder(puuid):
+def puuid_finder():
+    """
+    given name#tagline, returns puuid key
+    """
+    accountv1url = "https://americas.api.riotgames.com/riot/account/v1/accounts/by-riot-id/"
+    riotid = input("What is your Riot ID\n")
+    parts = riotid.split('#')
+    username = parts[0]
+    tagline = parts[1] 
+    accountv1url += username + "/" + tagline + "?api_key=" + api_key
+    puuidresponse = requests.get(accountv1url)
+    puuid = puuidresponse.json()['puuid']
+    return puuid
 
+def summoner_id_finder(puuid):
+    """
+    given puuid, returns summoner id
+    """
+    id_url = "https://na1.api.riotgames.com/tft/summoner/v1/summoners/by-puuid/" + puuid + "?api_key=" + api_key
+    response = requests.get(id_url)
+    id = response.json()['id']
+
+    return id
+
+print(summoner_id_finder(puuid_finder()))
+
+def rank_finder(summ_id):
+    """
+    given summonder id, returns rank and current LP
+    """
+    tfturl = "https://na1.api.riotgames.com/tft/league/v1/entries/by-summoner/"
+    tfturl += summ_id + "?api_key=" + api_key
+    tftresponse = requests.get(tfturl)
+
+# checks for empty response (unranked) otherwise returns the rank of the given user.
+    if not tftresponse.json():
+        return print(response.json()['name'] + "'s rank in TFT is Unranked")
+    else : 
+        return print(username + "'s rank in TFT is",
+                     tftresponse.json()[0]['tier'], 
+                     tftresponse.json()[0]['rank'],
+                     tftresponse.json()[0]['leaguePoints'],"LP")
+
+
+print(rank_finder("kcDVDtcSYWwLNsmgnzkd5dPVSnd1cwQd-cxc7I6FaOilN8A"))
+
+def username_finder(puuid):
+    """
+    given puuid, returns username
+    """
     tftaccounturl2 = "https://na1.api.riotgames.com/tft/summoner/v1/summoners/by-puuid/"
     tftaccounturl2 += puuid+"?api_key="+ api_key
     response = requests.get(tftaccounturl2)
@@ -56,12 +105,14 @@ def username_finder(puuid):
     return id
 
 def list_username_finder(puuid_list):
+    """
+    given list of puuids, returns list of usernames
+    """
     username_list = []
 
     for puuid in puuid_list:
-        print(username_finder(puuid))
-        
+        username_list.append(username_finder(puuid))
     return username_list
 
 print(username_finder(test_id))
-list_username_finder(test_ids)
+print(list_username_finder(test_ids))
