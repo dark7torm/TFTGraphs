@@ -42,7 +42,6 @@ def username_finder(puuid):
     id_url = "https://na1.api.riotgames.com/tft/summoner/v1/summoners/by-puuid/" + puuid + "?api_key=" + api_key
     response = requests.get(id_url)
     name = response.json()['name']
-
     return name
 
 def list_username_finder(puuid_list):
@@ -63,6 +62,25 @@ def rank_finder():
     name = username_finder(puuid)
     summ_id = summoner_id_finder(puuid)
 
+    return name
+
+def list_username_finder(puuid_list):
+    """
+    given list of puuids, returns list of usernames
+    """
+    username_list = []
+
+    for puuid in puuid_list:
+        username_list.append(username_finder(puuid))
+    return username_list
+
+def rank_finder():
+    """
+    given puuid, returns rank and current LP
+    """
+    puuid = puuid_finder()
+    name = username_finder(puuid)
+    summ_id = summoner_id_finder(puuid)
     tfturl = "https://na1.api.riotgames.com/tft/league/v1/entries/by-summoner/"
     tfturl += summ_id + "?api_key=" + api_key
     tftresponse = requests.get(tfturl)
@@ -134,6 +152,18 @@ if __name__ == "__main__":
     #smadgehugers#4985
     #ren#icant
     #jisung#9462
+
+    print(puuid_finder())
+
+    print(summoner_id_finder(puuid_finder()))
+
+    print(username_finder(puuid_finder()))
+
+    print(list_username_finder(test_ids))
+
+    print(rank_finder())
+
+    print(match_history(puuid_finder()))
 
     #NA1_4956815105 test match from ren
     match = "NA1_4956815105"
