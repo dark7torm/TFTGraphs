@@ -42,7 +42,6 @@ def username_finder(puuid):
     id_url = "https://na1.api.riotgames.com/tft/summoner/v1/summoners/by-puuid/" + puuid + "?api_key=" + api_key
     response = requests.get(id_url)
     name = response.json()['name']
-
     return name
 
 def list_username_finder(puuid_list):
@@ -63,6 +62,25 @@ def rank_finder():
     name = username_finder(puuid)
     summ_id = summoner_id_finder(puuid)
 
+    return name
+
+def list_username_finder(puuid_list):
+    """
+    given list of puuids, returns list of usernames
+    """
+    username_list = []
+
+    for puuid in puuid_list:
+        username_list.append(username_finder(puuid))
+    return username_list
+
+def rank_finder():
+    """
+    given puuid, returns rank and current LP
+    """
+    puuid = puuid_finder()
+    name = username_finder(puuid)
+    summ_id = summoner_id_finder(puuid)
     tfturl = "https://na1.api.riotgames.com/tft/league/v1/entries/by-summoner/"
     tfturl += summ_id + "?api_key=" + api_key
     tftresponse = requests.get(tfturl)
@@ -86,6 +104,27 @@ def match_history(puuid):
     gameresponse = requests.get(tftgamelisturl)
     
     return (gameresponse.json())
+
+# given match id return info json
+def match_info(match_id):
+    info_url = "https://americas.api.riotgames.com/tft/match/v1/matches/"
+    info_url += match_id
+    info_url += "?api_key=" + api_key
+    match_response_json = requests.get(info_url).json()
+    return match_response_json
+
+# given match info json return parsed information about the traits the user used
+def get_traits(match_json, puuid):
+    participant = match_json["info"]["participants"]
+    traits = []
+    for participant in participant:
+        if participant["puuid"] == puuid:
+            info = participant["traits"]
+            for trait in info:
+                traits.append(trait["name"][6:])
+    return traits
+        
+        
  
 if __name__ == "__main__":
     """
@@ -94,7 +133,6 @@ if __name__ == "__main__":
     #smadgehugers#4985
     #ren#icant
     #jisung#9462
-
 
     print(puuid_finder())
 
@@ -107,4 +145,43 @@ if __name__ == "__main__":
     print(rank_finder())
 
     print(match_history(puuid_finder()))
+
+    #NA1_4956815105 test match from ren
+    match = "NA1_4956815105"
+    # print(match_info(match))
+    print(get_traits(match_info(match), test_id))
+    # print(username_finder("1dq1hI89Zgd__zcs8qkr3YaKdK35R4wj20YNB8ELdJL5_55XGPAch6g0KEiAAwFpfkeMjEnQ5HrWOg"))
+    # print(puuid_finder())
+
+    # print(summoner_id_finder(puuid_finder()))
+
+    # print(username_finder(puuid_finder()))
+
+    # print(list_username_finder(test_ids))
+
+    # print(rank_finder())
+
+    # print(match_history(puuid_finder()))
+
+
+    # info_find = "https://americas.api.riotgames.com/tft/match/v1/matches/NA1_4956449190?api_key=RGAPI-63298e12-84cd-4492-9a26-5fe1f92f2ad9"
+    # response = requests.get(info_find)
+    # participants = response.json()["info"]["participants"]
+    # for participant in participants:
+    #     puuid = participant["puuid"]
+    #     placement = participant["placement"]
+    #     traits = participant["traits"]
+    #     units = participant["units"]
+    #     # print(summoner_id_finder(puuid))
+    #     print(summoner_id_finder(puuid), " placed ", placement, " with units ", units)
+    
+
+    # for tft-match given match id:
+    # metadata = json[0]
+    # info = json[1]
+    # queueId = json[2]
+    # queue_id = json[3]
+    # tft_game_type = json[4]
+    # tft_set_core_name = json[5]
+    # tft_set_number = json[6]
 
