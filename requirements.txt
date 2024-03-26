@@ -1,3 +1,4 @@
 cassiopeia
 json
 requests
+psycopg2
