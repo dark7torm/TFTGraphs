@@ -123,8 +123,27 @@ def get_traits(match_json, puuid):
             for trait in info:
                 traits.append(trait["name"][6:])
     return traits
-        
-        
+
+def get_units(match_json, puuid):
+    participant = match_json["info"]["participants"]
+    units = []
+    for participant in participant:
+        if participant["puuid"] == puuid:
+            info = participant["units"]
+            for trait in info:
+                units.append(trait["character_id"][6:])
+    return units
+
+def get_placement(match_json, puuid):
+    participant = match_json["info"]["participants"]
+    units = []
+    for participant in participant:
+        if participant["puuid"] == puuid:
+            placement =  participant["placement"]
+    return placement
+
+
+
  
 if __name__ == "__main__":
     """
@@ -150,6 +169,8 @@ if __name__ == "__main__":
     match = "NA1_4956815105"
     # print(match_info(match))
     print(get_traits(match_info(match), test_id))
+    print(get_units(match_info(match), test_id))
+    print(get_placement(match_info(match), test_id))
     # print(username_finder("1dq1hI89Zgd__zcs8qkr3YaKdK35R4wj20YNB8ELdJL5_55XGPAch6g0KEiAAwFpfkeMjEnQ5HrWOg"))
     # print(puuid_finder())
 
@@ -162,26 +183,3 @@ if __name__ == "__main__":
     # print(rank_finder())
 
     # print(match_history(puuid_finder()))
-
-
-    # info_find = "https://americas.api.riotgames.com/tft/match/v1/matches/NA1_4956449190?api_key=RGAPI-63298e12-84cd-4492-9a26-5fe1f92f2ad9"
-    # response = requests.get(info_find)
-    # participants = response.json()["info"]["participants"]
-    # for participant in participants:
-    #     puuid = participant["puuid"]
-    #     placement = participant["placement"]
-    #     traits = participant["traits"]
-    #     units = participant["units"]
-    #     # print(summoner_id_finder(puuid))
-    #     print(summoner_id_finder(puuid), " placed ", placement, " with units ", units)
-    
-
-    # for tft-match given match id:
-    # metadata = json[0]
-    # info = json[1]
-    # queueId = json[2]
-    # queue_id = json[3]
-    # tft_game_type = json[4]
-    # tft_set_core_name = json[5]
-    # tft_set_number = json[6]
-
