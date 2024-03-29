@@ -121,7 +121,8 @@ def get_traits(match_json, puuid):
         if participant["puuid"] == puuid:
             info = participant["traits"]
             for trait in info:
-                traits.append(trait["name"][6:])
+                if trait["style"] > 0:
+                    traits.append(trait["name"][6:])              
     return traits
 
 def get_units(match_json, puuid):
@@ -143,6 +144,30 @@ def get_placement(match_json, puuid):
     return placement
 
 
+def get_lastx_units(puuid):
+    match_list = match_history(puuid)
+    units_dict = dict()
+    i = 1
+    for match in match_list:
+        print(match)
+        if get_placement(match_info(match), puuid) < 5:
+            for unit in get_units(match_info(match), puuid):
+                if unit not in units_dict:
+                    units_dict[unit] = 1
+                else:
+                    units_dict[unit] = units_dict[unit] + 1
+            print(units_dict)
+        print("Match", i, "placement", get_placement(match_info(match), puuid))
+        i +=1
+    return units_dict
+
+
+            
+            
+
+            
+
+
 
  
 if __name__ == "__main__":
@@ -153,25 +178,6 @@ if __name__ == "__main__":
     #ren#icant
     #jisung#9462
 
-    print(puuid_finder())
-
-    print(summoner_id_finder(puuid_finder()))
-
-    print(username_finder(puuid_finder()))
-
-    print(list_username_finder(test_ids))
-
-    print(rank_finder())
-
-    print(match_history(puuid_finder()))
-
-    #NA1_4956815105 test match from ren
-    match = "NA1_4956815105"
-    # print(match_info(match))
-    print(get_traits(match_info(match), test_id))
-    print(get_units(match_info(match), test_id))
-    print(get_placement(match_info(match), test_id))
-    # print(username_finder("1dq1hI89Zgd__zcs8qkr3YaKdK35R4wj20YNB8ELdJL5_55XGPAch6g0KEiAAwFpfkeMjEnQ5HrWOg"))
     # print(puuid_finder())
 
     # print(summoner_id_finder(puuid_finder()))
@@ -183,3 +189,14 @@ if __name__ == "__main__":
     # print(rank_finder())
 
     # print(match_history(puuid_finder()))
+
+    #NA1_4956815105 test match from ren
+    match = "NA1_4956815105"
+    print(get_lastx_units(test_id))
+    # print(get_placement(match_info("NA1_4933244113"), test_id))
+    # print(match_info(match))
+    # print(get_traits(match_info(match), test_id))
+    # print(get_units(match_info(match), test_id))
+    # print(get_placement(match_info(match), test_id))
+    # print(username_finder("1dq1hI89Zgd__zcs8qkr3YaKdK35R4wj20YNB8ELdJL5_55XGPAch6g0KEiAAwFpfkeMjEnQ5HrWOg"))
+
