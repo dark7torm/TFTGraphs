@@ -149,17 +149,36 @@ def get_lastx_units(puuid):
     units_dict = dict()
     i = 1
     for match in match_list:
-        print(match)
+        # print(match)
         if get_placement(match_info(match), puuid) < 5:
             for unit in get_units(match_info(match), puuid):
                 if unit not in units_dict:
                     units_dict[unit] = 1
                 else:
                     units_dict[unit] = units_dict[unit] + 1
-            print(units_dict)
-        print("Match", i, "placement", get_placement(match_info(match), puuid))
+            # print(units_dict)
+        # print("Match", i, "placement", get_placement(match_info(match), puuid))
         i +=1
     return units_dict
+
+
+def get_lastx_traits(puuid):
+    match_list = match_history(puuid)
+    traits_dict = dict()
+    i = 1
+    for match in match_list:
+        # print(match)
+        if get_placement(match_info(match), puuid) < 5:
+            for trait in get_traits(match_info(match), puuid):
+                if trait not in traits_dict:
+                    traits_dict[trait] = 1
+                else:
+                    traits_dict[trait] = traits_dict[trait] + 1
+                
+            # print(units_dict)
+        # print("Match", i, "placement", get_placement(match_info(match), puuid))
+        i +=1
+    return traits_dict
 
 
             
@@ -192,7 +211,8 @@ if __name__ == "__main__":
 
     #NA1_4956815105 test match from ren
     match = "NA1_4956815105"
-    print(get_lastx_units(test_id))
+    # print(get_lastx_units(test_id))
+    print(get_lastx_traits(test_id))
     # print(get_placement(match_info("NA1_4933244113"), test_id))
     # print(match_info(match))
     # print(get_traits(match_info(match), test_id))
