@@ -112,6 +112,7 @@ def match_history(puuid):
     """
     tftgamelisturl = 'https://americas.api.riotgames.com/tft/match/v1/matches/by-puuid/'
     count = gameEntry.get()
+    gameEntry.delete(0, len(count))
     tftgamelisturl += puuid + '/ids?start=0&' 'count=' +count + '&api_key=' + api_key
     gameresponse = requests.get(tftgamelisturl)
 
@@ -192,18 +193,28 @@ def get_lastx_traits(puuid):
             # print(units_dict)
         # print("Match", i, "placement", get_placement(match_info(match), puuid))
         i +=1
-    resultLabel.config(text = traits_dict)
+    resultLabel.config(text = format_result(traits_dict), wraplength=780)
+    resultLabel.pack(expand=True, fill=BOTH)
+    print(format_result(traits_dict))
     return traits_dict
 
 
+def format_result(traits_dict):
+    # Sorting the dictionary by value in descending order and by key in ascending order if values are equal
+    sorted_items = sorted(traits_dict.items(), key=lambda item: (-item[1], item[0]))
+
+    # Formatting the sorted items into a string list with each item on a new line
+    formatted_list = "\n".join(f"{trait}: {count}" for trait, count in sorted_items)
+    print(formatted_list)
+    return formatted_list
 
             
 def gui_init():
     
     
     window.title("TFTGraphs")
-
-    window.geometry('900x500')
+    width, height = window.winfo_screenwidth(), window.winfo_screenheight()
+    window.geometry('%dx%d+0+0' % (width,height))
     window.tk.call('tk', 'scaling', 3.0)
     global gameLabel, gameEntry, gameButton, resultLabel
     
@@ -220,7 +231,7 @@ def gui_init():
         command = puuid_finder
     )
     gameButton.pack()
-    resultLabel = Label(window, width = 50)
+    resultLabel = Label(window, wraplength=1000, width=1000)
     resultLabel.pack()
     print("gui initialized")
     window.mainloop()
