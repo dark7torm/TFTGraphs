@@ -141,7 +141,11 @@ def match_info(match_id):
 
 # given match info json return parsed information about the traits the user used
 def get_traits(match_json, puuid):
-    participant = match_json["info"]["participants"]
+    participant = {}
+    try:
+        participant = match_json['info']['participants']
+    except KeyError:
+        print(match_json)
     traits = []
     for participant in participant:
         if participant["puuid"] == puuid:
@@ -152,7 +156,11 @@ def get_traits(match_json, puuid):
     return traits
 
 def get_units(match_json, puuid):
-    participant = match_json["info"]["participants"]
+    participant = {}
+    try:
+        participant = match_json['info']['participants']
+    except KeyError:
+        print(match_json)
     units = []
     for participant in participant:
         if participant["puuid"] == puuid:
@@ -162,10 +170,13 @@ def get_units(match_json, puuid):
     return units
 
 def get_placement(match_json, puuid): 
-    if match_json["info"] != NONE:
-        participant = match_json["info"]["participants"]
-    
+    participant = {}
+    try:
+        participant = match_json['info']['participants']
+    except KeyError:
+        print(match_json)
     units = []
+    placement = 9
     for participant in participant:
         if participant["puuid"] == puuid:
             placement =  participant["placement"]
@@ -187,6 +198,8 @@ def get_lastx_units(puuid):
             # print(units_dict)
         #print("Match", i, "placement", get_placement(match_info(match), puuid))
         i +=1
+    resultLabel2.config(text = format_result(units_dict), wraplength=780)
+    resultLabel2.pack(expand=True, fill=BOTH)
     return units_dict
 
 
@@ -195,7 +208,6 @@ def get_lastx_traits(puuid):
     traits_dict = dict()
     i = 1
     for match in match_list:
-        # print(match)
         if get_placement(match_info(match), puuid) < 5:
             for trait in get_traits(match_info(match), puuid):
                 if trait not in traits_dict:
