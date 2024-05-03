@@ -1,5 +1,8 @@
 import requests
 import os
+from tkinter import *
+from tkinter import font
+from collections import defaultdict
 # sets the api key as the environment variable in your computerjisung
 # api_key = "insert api via developer.riotgames.com"
 
@@ -13,19 +16,38 @@ test_ids = ["1dq1hI89Zgd__zcs8qkr3YaKdK35R4wj20YNB8ELdJL5_55XGPAch6g0KEiAAwFpfke
 accountv1url = "https://americas.api.riotgames.com/riot/account/v1/accounts/by-riot-id/"
 tftaccounturl = "https://na1.api.riotgames.com/tft/summoner/v1/summoners/by-puuid/"
 
+# GUI window 
+window = Tk()
+window.state('zoomed')
+
+
+# font
+graphsFont = font.Font(family = "Helvetica", size=12, weight="bold")
+def adjust_wrap(event):
+    # Adjust wraplength to the current width of the window
+    resultLabel.config(wraplength=window.winfo_width())
+
+
+
 def puuid_finder():
     """
     given name#tagline, returns puuid key
     """
     accountv1url = "https://americas.api.riotgames.com/riot/account/v1/accounts/by-riot-id/"
-    riotid = input("What is your Riot ID\n")
+    print("finding riotid")
+    riotid = gameEntry.get() 
+    # riotid = input("What is your Riot ID\n")
     parts = riotid.split('#')
     username = parts[0]
     tagline = parts[1] 
     accountv1url += username + "/" + tagline + "?api_key=" + api_key
     puuidresponse = requests.get(accountv1url)
     puuid = puuidresponse.json()['puuid']
-
+    print(puuid)
+    gameLabel.config(text = "How many games would you like to analyze your traits for")
+    gameEntry.delete(0, len(riotid))
+    history = match_history(puuid)
+    gameButton.config(command = lambda: get_lastx_traits(puuid), text = "Go")
     return puuid
 
 def summoner_id_finder(puuid):
@@ -99,9 +121,12 @@ def match_history(puuid):
     Given puuid, returns match history up to inputted count
     """
     tftgamelisturl = 'https://americas.api.riotgames.com/tft/match/v1/matches/by-puuid/'
-    count = input("How many games would you like to see?\n")
+    count = gameEntry.get()
+    gameEntry.delete(0, len(count))
     tftgamelisturl += puuid + '/ids?start=0&' 'count=' +count + '&api_key=' + api_key
     gameresponse = requests.get(tftgamelisturl)
+
+    print(gameresponse.json())
     
     return (gameresponse.json())
 
@@ -149,7 +174,7 @@ def get_lastx_units(puuid):
     units_dict = dict()
     i = 1
     for match in match_list:
-        # print(match)
+        #print(match)
         if get_placement(match_info(match), puuid) < 5:
             for unit in get_units(match_info(match), puuid):
                 if unit not in units_dict:
@@ -157,7 +182,7 @@ def get_lastx_units(puuid):
                 else:
                     units_dict[unit] = units_dict[unit] + 1
             # print(units_dict)
-        # print("Match", i, "placement", get_placement(match_info(match), puuid))
+        #print("Match", i, "placement", get_placement(match_info(match), puuid))
         i +=1
     return units_dict
 
@@ -178,11 +203,56 @@ def get_lastx_traits(puuid):
             # print(units_dict)
         # print("Match", i, "placement", get_placement(match_info(match), puuid))
         i +=1
+    resultLabel.config(text = format_result(traits_dict), wraplength=780)
+    resultLabel.pack(expand=True, fill=BOTH)
     return traits_dict
 
 
+def format_result(traits_dict):
+    # Sorting the dictionary by count in descending order and by trait name in ascending order
+    sorted_items = sorted(traits_dict.items(), key=lambda item: (-item[1], item[0]))
+    
+    # Grouping traits by count
+    grouped = defaultdict(list)
+    for trait, count in sorted_items:
+        grouped[count].append(trait)
+
+    # Formatting the grouped data into a single string
+    formatted_list = "\n".join(f"{count}: {', '.join(sorted(traits))}" for count, traits in sorted(grouped.items(), reverse=True))
+    print(formatted_list)
+    return formatted_list
+
             
-            
+def gui_init():
+    
+    
+    window.title("TFTGraphs")
+    width, height = window.winfo_screenwidth(), window.winfo_screenheight()
+    window.geometry('%dx%d+0+0' % (width,height))
+    window.tk.call('tk', 'scaling', 3.0)
+    global gameLabel, gameEntry, gameButton, resultLabel
+    
+    gameLabel = Label(window, text="What is your riot id", font=graphsFont)
+    gameLabel.pack()
+    gameEntry = Entry(width = 50, font=graphsFont)
+    gameEntry.pack()
+
+    gameButton = Button(
+        window,
+        text = "Find PUUID",
+        width = 10,
+        height = 3,
+        command = puuid_finder,
+        font=graphsFont
+    )
+    gameButton.pack()
+    resultLabel = Label(window, wraplength=1000, width=1000, anchor='w', justify='left', font=graphsFont)
+    resultLabel.pack(fill='both', expand = True)
+    window.bind('<Configure>', adjust_wrap)
+    print("gui initialized")
+    window.mainloop()
+    
+    
 
             
 
@@ -193,9 +263,9 @@ if __name__ == "__main__":
     """
     function testing. riot ids used. 
     """
-    #smadgehugers#4985
-    #ren#icant
-    #jisung#9462
+    sean_id = "WnHv1ZvlirRiQ6dwX7U8YPuSSElqhbcBhI3QdXbfGh7-NVzPUhrSuUSecKfbk8khPiexI9KFyIS3DQ"
+    ren_id =  "1dq1hI89Zgd__zcs8qkr3YaKdK35R4wj20YNB8ELdJL5_55XGPAch6g0KEiAAwFpfkeMjEnQ5HrWOg"
+    jisung_id =  "_Mgiig0pdFVXxA2btc4XjF_hVSOW16JzLhZiBZRi6LJdxt-QAZJD5fIY7sGcmKfIzJp37HjQggTR7A"
 
     # print(puuid_finder())
 
@@ -211,8 +281,12 @@ if __name__ == "__main__":
 
     #NA1_4956815105 test match from ren
     match = "NA1_4956815105"
-    # print(get_lastx_units(test_id))
-    print(get_lastx_traits(test_id))
+    gui_init()
+    
+
+    
+    # print(get_lastx_units(sean_id))
+    # print(get_lastx_traits(test_id))
     # print(get_placement(match_info("NA1_4933244113"), test_id))
     # print(match_info(match))
     # print(get_traits(match_info(match), test_id))
