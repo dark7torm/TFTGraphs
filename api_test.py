@@ -1,6 +1,8 @@
 import requests
 import os
 from tkinter import *
+from tkinter import font
+from collections import defaultdict
 # sets the api key as the environment variable in your computerjisung
 # api_key = "insert api via developer.riotgames.com"
 
@@ -16,6 +18,14 @@ tftaccounturl = "https://na1.api.riotgames.com/tft/summoner/v1/summoners/by-puui
 
 # GUI window 
 window = Tk()
+window.state('zoomed')
+
+
+# font
+graphsFont = font.Font(family = "Helvetica", size=12, weight="bold")
+def adjust_wrap(event):
+    # Adjust wraplength to the current width of the window
+    resultLabel.config(wraplength=window.winfo_width())
 
 
 
@@ -195,16 +205,20 @@ def get_lastx_traits(puuid):
         i +=1
     resultLabel.config(text = format_result(traits_dict), wraplength=780)
     resultLabel.pack(expand=True, fill=BOTH)
-    print(format_result(traits_dict))
     return traits_dict
 
 
 def format_result(traits_dict):
-    # Sorting the dictionary by value in descending order and by key in ascending order if values are equal
+    # Sorting the dictionary by count in descending order and by trait name in ascending order
     sorted_items = sorted(traits_dict.items(), key=lambda item: (-item[1], item[0]))
+    
+    # Grouping traits by count
+    grouped = defaultdict(list)
+    for trait, count in sorted_items:
+        grouped[count].append(trait)
 
-    # Formatting the sorted items into a string list with each item on a new line
-    formatted_list = "\n".join(f"{trait}: {count}" for trait, count in sorted_items)
+    # Formatting the grouped data into a single string
+    formatted_list = "\n".join(f"{count}: {', '.join(sorted(traits))}" for count, traits in sorted(grouped.items(), reverse=True))
     print(formatted_list)
     return formatted_list
 
@@ -218,9 +232,9 @@ def gui_init():
     window.tk.call('tk', 'scaling', 3.0)
     global gameLabel, gameEntry, gameButton, resultLabel
     
-    gameLabel = Label(window, text="What is your riot id")
+    gameLabel = Label(window, text="What is your riot id", font=graphsFont)
     gameLabel.pack()
-    gameEntry = Entry(width = 50)
+    gameEntry = Entry(width = 50, font=graphsFont)
     gameEntry.pack()
 
     gameButton = Button(
@@ -228,11 +242,13 @@ def gui_init():
         text = "Find PUUID",
         width = 10,
         height = 3,
-        command = puuid_finder
+        command = puuid_finder,
+        font=graphsFont
     )
     gameButton.pack()
-    resultLabel = Label(window, wraplength=1000, width=1000)
-    resultLabel.pack()
+    resultLabel = Label(window, wraplength=1000, width=1000, anchor='w', justify='left', font=graphsFont)
+    resultLabel.pack(fill='both', expand = True)
+    window.bind('<Configure>', adjust_wrap)
     print("gui initialized")
     window.mainloop()
     
