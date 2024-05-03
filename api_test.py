@@ -25,7 +25,8 @@ window.state('zoomed')
 graphsFont = font.Font(family = "Helvetica", size=12, weight="bold")
 def adjust_wrap(event):
     # Adjust wraplength to the current width of the window
-    resultLabel.config(wraplength=window.winfo_width())
+    resultLabel1.config(wraplength=window.winfo_width())
+    resultLabel2.config(wraplength=window.winfo_width())
 
 
 
@@ -160,8 +161,10 @@ def get_units(match_json, puuid):
                 units.append(trait["character_id"][6:])
     return units
 
-def get_placement(match_json, puuid):
-    participant = match_json["info"]["participants"]
+def get_placement(match_json, puuid): 
+    if match_json["info"] != NONE:
+        participant = match_json["info"]["participants"]
+    
     units = []
     for participant in participant:
         if participant["puuid"] == puuid:
@@ -203,8 +206,8 @@ def get_lastx_traits(puuid):
             # print(units_dict)
         # print("Match", i, "placement", get_placement(match_info(match), puuid))
         i +=1
-    resultLabel.config(text = format_result(traits_dict), wraplength=780)
-    resultLabel.pack(expand=True, fill=BOTH)
+    resultLabel1.config(text = format_result(traits_dict), wraplength=780)
+    resultLabel1.pack(expand=True, fill=BOTH)
     return traits_dict
 
 
@@ -230,7 +233,7 @@ def gui_init():
     width, height = window.winfo_screenwidth(), window.winfo_screenheight()
     window.geometry('%dx%d+0+0' % (width,height))
     window.tk.call('tk', 'scaling', 3.0)
-    global gameLabel, gameEntry, gameButton, resultLabel
+    global gameLabel, gameEntry, gameButton, resultLabel1, resultLabel2
     
     gameLabel = Label(window, text="What is your riot id", font=graphsFont)
     gameLabel.pack()
@@ -246,8 +249,11 @@ def gui_init():
         font=graphsFont
     )
     gameButton.pack()
-    resultLabel = Label(window, wraplength=1000, width=1000, anchor='w', justify='left', font=graphsFont)
-    resultLabel.pack(fill='both', expand = True)
+    resultLabel1 = Label(window, wraplength=1000, width=1000, anchor='w', justify='left', font=graphsFont)
+    resultLabel1.pack(fill='both', expand = True)
+
+    resultLabel2 = Label(window, wraplength=1000, width=1000, anchor='w', justify='left', font=graphsFont)
+    resultLabel2.pack(fill='both', expand = True)
     window.bind('<Configure>', adjust_wrap)
     print("gui initialized")
     window.mainloop()
