@@ -24,9 +24,9 @@ window.state('zoomed')
 # font
 graphsFont = font.Font(family = "Helvetica", size=12, weight="bold")
 def adjust_wrap(event):
-    # Adjust wraplength to the current width of the window
-    resultLabel1.config(wraplength=window.winfo_width())
-    resultLabel2.config(wraplength=window.winfo_width())
+    # Adjust wraplength to half the current width of the window for each label
+    resultLabel1.config(wraplength=window.winfo_width() // 2)
+    resultLabel2.config(wraplength=window.winfo_width() // 2)
 
 
 
@@ -48,7 +48,7 @@ def puuid_finder():
     gameLabel.config(text = "How many games would you like to analyze your traits for")
     gameEntry.delete(0, len(riotid))
     history = match_history(puuid)
-    gameButton.config(command = lambda: get_lastx_traits(puuid), text = "Go")
+    gameButton.config(command = lambda: get_info(puuid), text = "Go")
     return puuid
 
 def summoner_id_finder(puuid):
@@ -188,20 +188,16 @@ def get_lastx_units(puuid):
     units_dict = dict()
     i = 1
     for match in match_list:
-        #print(match)
         if get_placement(match_info(match), puuid) < 5:
             for unit in get_units(match_info(match), puuid):
                 if unit not in units_dict:
                     units_dict[unit] = 1
                 else:
-                    units_dict[unit] = units_dict[unit] + 1
-            # print(units_dict)
-        #print("Match", i, "placement", get_placement(match_info(match), puuid))
-        i +=1
-    resultLabel2.config(text = format_result(units_dict), wraplength=780)
-    resultLabel2.pack(expand=True, fill=BOTH)
+                    units_dict[unit] += 1
+        i += 1
+    resultLabel2.config(text=format_result(units_dict), wraplength=window.winfo_width() // 2)
+    resultLabel2.grid(row=3, column=1, sticky="nsew")
     return units_dict
-
 
 def get_lastx_traits(puuid):
     match_list = match_history(puuid)
@@ -213,15 +209,11 @@ def get_lastx_traits(puuid):
                 if trait not in traits_dict:
                     traits_dict[trait] = 1
                 else:
-                    traits_dict[trait] = traits_dict[trait] + 1
-                
-            # print(units_dict)
-        # print("Match", i, "placement", get_placement(match_info(match), puuid))
-        i +=1
-    resultLabel1.config(text = format_result(traits_dict), wraplength=780)
-    resultLabel1.pack(expand=True, fill=BOTH)
+                    traits_dict[trait] += 1
+        i += 1
+    resultLabel1.config(text=format_result(traits_dict), wraplength=window.winfo_width() // 2)
+    resultLabel1.grid(row=3, column=0, sticky="nsew")
     return traits_dict
-
 
 def format_result(traits_dict):
     # Sorting the dictionary by count in descending order and by trait name in ascending order
@@ -237,38 +229,47 @@ def format_result(traits_dict):
     print(formatted_list)
     return formatted_list
 
+def get_info(puuid):
+    get_lastx_traits(puuid)
+    get_lastx_units(puuid)
+
             
 def gui_init():
-    
-    
     window.title("TFTGraphs")
     width, height = window.winfo_screenwidth(), window.winfo_screenheight()
     window.geometry('%dx%d+0+0' % (width,height))
     window.tk.call('tk', 'scaling', 3.0)
+    window.columnconfigure(0, weight=1)
+    window.columnconfigure(1, weight=1)
     global gameLabel, gameEntry, gameButton, resultLabel1, resultLabel2
     
     gameLabel = Label(window, text="What is your riot id", font=graphsFont)
-    gameLabel.pack()
-    gameEntry = Entry(width = 50, font=graphsFont)
-    gameEntry.pack()
+    gameLabel.grid(row=0, column=0, columnspan=2)
+    
+    gameEntry = Entry(width=50, font=graphsFont)
+    gameEntry.grid(row=1, column=0, columnspan=2)
 
     gameButton = Button(
         window,
-        text = "Find PUUID",
-        width = 10,
-        height = 3,
-        command = puuid_finder,
+        text="Find PUUID",
+        width=10,
+        height=3,
+        command=puuid_finder,
         font=graphsFont
     )
-    gameButton.pack()
-    resultLabel1 = Label(window, wraplength=1000, width=1000, anchor='w', justify='left', font=graphsFont)
-    resultLabel1.pack(fill='both', expand = True)
+    gameButton.grid(row=2, column=0, columnspan=2)
 
-    resultLabel2 = Label(window, wraplength=1000, width=1000, anchor='w', justify='left', font=graphsFont)
-    resultLabel2.pack(fill='both', expand = True)
+    resultLabel1 = Label(window, wraplength=width//2, anchor='w', justify='left', font=graphsFont)
+    resultLabel1.grid(row=3, column=0, sticky="nsew")
+
+    resultLabel2 = Label(window, wraplength=width//2, anchor='w', justify='left', font=graphsFont)
+    resultLabel2.grid(row=3, column=1, sticky="nsew")
+
     window.bind('<Configure>', adjust_wrap)
     print("gui initialized")
     window.mainloop()
+
+
     
     
 
