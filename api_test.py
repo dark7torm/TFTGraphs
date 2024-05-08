@@ -244,10 +244,10 @@ def gui_init():
     global gameLabel, gameEntry, gameButton, resultLabel1, resultLabel2
     
     gameLabel = Label(window, text="What is your riot id", font=graphsFont)
-    gameLabel.grid(row=0, column=0, columnspan=2)
+    gameLabel.grid(row=0, column=0, columnspan=2, padx=10, pady=10)
     
     gameEntry = Entry(width=50, font=graphsFont)
-    gameEntry.grid(row=1, column=0, columnspan=2)
+    gameEntry.grid(row=1, column=0, columnspan=2, padx=10, pady=10)
 
     gameButton = Button(
         window,
@@ -255,15 +255,16 @@ def gui_init():
         width=10,
         height=3,
         command=puuid_finder,
-        font=graphsFont
+        font=graphsFont,
+        pady=5
     )
-    gameButton.grid(row=2, column=0, columnspan=2)
+    gameButton.grid(row=2, column=0, columnspan=2, padx=10, pady=10)
 
     resultLabel1 = Label(window, wraplength=width//2, anchor='w', justify='left', font=graphsFont)
-    resultLabel1.grid(row=3, column=0, sticky="nsew")
+    resultLabel1.grid(row=3, column=0, sticky="nsew", padx=10, pady=10)
 
     resultLabel2 = Label(window, wraplength=width//2, anchor='w', justify='left', font=graphsFont)
-    resultLabel2.grid(row=3, column=1, sticky="nsew")
+    resultLabel2.grid(row=3, column=1, sticky="nsew", padx=10, pady=10)
 
     window.bind('<Configure>', adjust_wrap)
     print("gui initialized")
