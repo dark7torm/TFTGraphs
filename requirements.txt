@@ -2,3 +2,5 @@ cassiopeia
 json
 requests
 psycopg2
+requests
+tweepy

@@ -3,15 +3,25 @@ import os
 from tkinter import *
 from tkinter import font
 from collections import defaultdict
+import tweepy
 # sets the api key as the environment variable in your computerjisung
 # api_key = "insert api via developer.riotgames.com"
-
+twit_api_key =  os.environ["TWIT_API"]
+api_secret = os.environ["TWIT_API_SECRET"]
+bearer = os.environ["TWIT_BEARER"]
+access = os.environ["TWIT_ACCESS"]
+access_secret = os.environ["TWIT_ACCESS_SECRET"]
 api_key = os.environ["RIOT_APP_API_KEY"]
+client = tweepy.Client(bearer, api_key, api_secret, access, access_secret)
+auth = tweepy.OAuth1UserHandler(api_key, api_secret, access, access_secret)
+api = tweepy.API(auth)
 # ren id
 test_id = "1dq1hI89Zgd__zcs8qkr3YaKdK35R4wj20YNB8ELdJL5_55XGPAch6g0KEiAAwFpfkeMjEnQ5HrWOg"
-# ren + jisung id
+# ren + jisung + sean + owen id
 test_ids = ["1dq1hI89Zgd__zcs8qkr3YaKdK35R4wj20YNB8ELdJL5_55XGPAch6g0KEiAAwFpfkeMjEnQ5HrWOg",
-            "_Mgiig0pdFVXxA2btc4XjF_hVSOW16JzLhZiBZRi6LJdxt-QAZJD5fIY7sGcmKfIzJp37HjQggTR7A"]
+            "_Mgiig0pdFVXxA2btc4XjF_hVSOW16JzLhZiBZRi6LJdxt-QAZJD5fIY7sGcmKfIzJp37HjQggTR7A",
+            "WnHv1ZvlirRiQ6dwX7U8YPuSSElqhbcBhI3QdXbfGh7-NVzPUhrSuUSecKfbk8khPiexI9KFyIS3DQ",
+            "F9rgc1D5JAL9w71D8KCa-5z3z9swgTdQcis2-cMu3YZenOT66RjFm-AsDqqA7X1gpe7odktx4f8WwA"]
 
 accountv1url = "https://americas.api.riotgames.com/riot/account/v1/accounts/by-riot-id/"
 tftaccounturl = "https://na1.api.riotgames.com/tft/summoner/v1/summoners/by-puuid/"
@@ -62,9 +72,10 @@ def summoner_id_finder(puuid):
     return id
 
 def username_finder(puuid):
-    id_url = "https://na1.api.riotgames.com/tft/summoner/v1/summoners/by-puuid/" + puuid + "?api_key=" + api_key
+    id_url = "https://americas.api.riotgames.com/riot/account/v1/accounts/by-puuid/" + puuid + "?api_key=" + api_key
     response = requests.get(id_url)
-    name = response.json()['name']
+    print(response.json())
+    name = response.json()['gameName']
     return name
 
 def list_username_finder(puuid_list):
@@ -77,16 +88,6 @@ def list_username_finder(puuid_list):
         username_list.append(username_finder(puuid))
     return username_list
 
-def rank_finder():
-    """
-    given puuid, returns rank and current LP
-    """
-    puuid = puuid_finder()
-    name = username_finder(puuid)
-    summ_id = summoner_id_finder(puuid)
-
-    return name
-
 def list_username_finder(puuid_list):
     """
     given list of puuids, returns list of usernames
@@ -97,11 +98,10 @@ def list_username_finder(puuid_list):
         username_list.append(username_finder(puuid))
     return username_list
 
-def rank_finder():
+def rank_finder(puuid):
     """
     given puuid, returns rank and current LP
     """
-    puuid = puuid_finder()
     name = username_finder(puuid)
     summ_id = summoner_id_finder(puuid)
     tfturl = "https://na1.api.riotgames.com/tft/league/v1/entries/by-summoner/"
@@ -112,10 +112,7 @@ def rank_finder():
     if not tftresponse.json():
         return (name + "'s rank in TFT is Unranked")
     else : 
-        return print(name + "'s rank in TFT is",
-                     tftresponse.json()[0]['tier'], 
-                     tftresponse.json()[0]['rank'],
-                     tftresponse.json()[0]['leaguePoints'],"LP")
+        return name + "'s rank in TFT is", tftresponse.json()[0]['tier'], tftresponse.json()[0]['rank'], tftresponse.json()[0]['leaguePoints'],"LP"
 
 def match_history(puuid): 
     """
@@ -269,8 +266,16 @@ def gui_init():
     window.bind('<Configure>', adjust_wrap)
     print("gui initialized")
     window.mainloop()
-
-
+# api_key = 'LzS1qwmphpoIFLR16TkESPaz4'
+# api_secret = '2NZcMYcy6PyNP5kRa86KdMXMnXSOLvnSl228nxmtiBR5wsjr1i'
+# bearer = 'AAAAAAAAAAAAAAAAAAAAAHHQtgEAAAAA1y8XSXH1dZdq1WNAwYTj0tL5%2FTI%3DNnU6spzmKUWCbGlGyQvQA9OpG2hJsXVdrbf7XdCsV3MTzNLxXO'
+# access = '1788257350769422336-22LkKNNwWT15877MGXGCprvhzXHzXS'
+# access_secret = 'c8EoSrODgO5sh6dTVpDefbu53Dg5t0JQaPngglbsKNbua'
+def tweet_ranks():
+    # print(twit_api_key, api_secret, bearer, access, access_secret)
+    for puuid in test_ids:
+        id = summoner_id_finder(puuid)
+        client.create_tweet(text = rank_finder(puuid))
     
     
 
@@ -301,7 +306,8 @@ if __name__ == "__main__":
 
     #NA1_4956815105 test match from ren
     match = "NA1_4956815105"
-    gui_init()
+    # gui_init()
+    tweet_ranks()
     
 
     
