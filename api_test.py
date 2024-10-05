@@ -3,18 +3,18 @@ import os
 from tkinter import *
 from tkinter import font
 from collections import defaultdict
-import tweepy
+#import tweepy
 # sets the api key as the environment variable in your computerjisung
 # api_key = "insert api via developer.riotgames.com"
-twit_api_key =  os.environ["TWIT_API"]
-api_secret = os.environ["TWIT_API_SECRET"]
-bearer = os.environ["TWIT_BEARER"]
-access = os.environ["TWIT_ACCESS"]
-access_secret = os.environ["TWIT_ACCESS_SECRET"]
+# twit_api_key =  os.environ["TWIT_API"]
+# api_secret = os.environ["TWIT_API_SECRET"]
+# bearer = os.environ["TWIT_BEARER"]
+# access = os.environ["TWIT_ACCESS"]
+# access_secret = os.environ["TWIT_ACCESS_SECRET"]
 api_key = os.environ["RIOT_APP_API_KEY"]
-client = tweepy.Client(bearer, api_key, api_secret, access, access_secret)
-auth = tweepy.OAuth1UserHandler(api_key, api_secret, access, access_secret)
-api = tweepy.API(auth)
+# client = tweepy.Client(bearer, api_key, api_secret, access, access_secret)
+# auth = tweepy.OAuth1UserHandler(api_key, api_secret, access, access_secret)
+# api = tweepy.API(auth)
 # ren id
 test_id = "1dq1hI89Zgd__zcs8qkr3YaKdK35R4wj20YNB8ELdJL5_55XGPAch6g0KEiAAwFpfkeMjEnQ5HrWOg"
 # ren + jisung + sean + owen id
@@ -306,8 +306,8 @@ if __name__ == "__main__":
 
     #NA1_4956815105 test match from ren
     match = "NA1_4956815105"
-    # gui_init()
-    tweet_ranks()
+    gui_init()
+    # tweet_ranks()
     
 
     
