@@ -104,12 +104,6 @@ def format_result(traits_dict):
     formatted_list = "\n".join(f"{count}: {', '.join(sorted(traits))}" for count, traits in sorted(grouped.items(), reverse=True))
     return formatted_list
 
-def prepare_units(units_dict):
-    return [{"unit": unit, "count": count} for unit, count in units_dict.items()]
-
-def prepare_traits(traits_dict):
-    return [{"trait": trait, "count": count} for trait, count in traits_dict.items()]
-
 # PostgreSQL connection and insertion functions
 def connect_and_store(username, puuid, units, traits):
     connection = None
@@ -118,26 +112,20 @@ def connect_and_store(username, puuid, units, traits):
         connection = psycopg2.connect(**params)
         with connection.cursor() as curs:
             create_table_query = '''
-            CREATE TABLE IF NOT EXISTS tft_user_data (
+            CREATE TABLE IF NOT EXISTS tft_player_data (
                 id SERIAL PRIMARY KEY,
                 username VARCHAR(100) NOT NULL,
                 puuid VARCHAR(100) NOT NULL,
-                units JSON NOT NULL,
-                traits JSON NOT NULL
+                units TEXT[] NOT NULL,
+                traits TEXT[] NOT NULL
             )'''
-
             curs.execute(create_table_query)
-            
             insert_query = '''
-            INSERT INTO tft_user_data (username, puuid, units, traits)
+            INSERT INTO tft_player_data (username, puuid, units, traits)
             VALUES (%s, %s, %s, %s)
             RETURNING id
             '''
-            
-            prepared_units = prepare_units(units)
-            prepared_traits = prepare_traits(traits)
-            
-            curs.execute(insert_query, (username, puuid, prepared_units, prepared_traits))
+            curs.execute(insert_query, (username, puuid, units, traits))
             new_id = curs.fetchone()[0]
             print(f"Inserted data with id: {new_id}")
             connection.commit()
