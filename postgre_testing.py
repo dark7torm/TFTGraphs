@@ -5,13 +5,12 @@ def connect():
     connection = None
     params = load_config()
     try:
-        # Establish connection using parameters from the config
+        # Establish connection
         connection = psycopg2.connect(**params)
         
         with connection.cursor() as curs:
 
             try:
-                # 1. Create a new schema (table) if it doesn't already exist
                 create_table_query = '''
                 CREATE TABLE IF NOT EXISTS test_schema (
                     id SERIAL PRIMARY KEY,
@@ -22,7 +21,7 @@ def connect():
                 curs.execute(create_table_query)
                 print("Table created successfully.")
 
-                # 2. Insert a value into the table
+                # insert value
                 insert_query = '''
                 INSERT INTO test_schema (name, age)
                 VALUES (%s, %s) RETURNING id
@@ -31,10 +30,10 @@ def connect():
                 new_id = curs.fetchone()[0]
                 print(f"Inserted value with id: {new_id}")
 
-                # Commit the changes after insertion
+                
                 connection.commit()
 
-                # 3. Update the value (change 'age' for the inserted record)
+                # update value
                 update_query = '''
                 UPDATE test_schema
                 SET age = %s
@@ -44,7 +43,7 @@ def connect():
                 connection.commit()
                 print(f"Updated value with id: {new_id}")
 
-                # 4. Retrieve and print the updated value
+                # print value
                 select_query = '''
                 SELECT id, name, age FROM test_schema WHERE id = %s
                 '''
